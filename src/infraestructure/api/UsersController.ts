@@ -1,39 +1,36 @@
-import { Body, Controller, Get, HttpStatus, Post, Query, Res } from "@nestjs/common";
+import { Body, Controller, Get, HttpStatus, Post, Query, Res, UseGuards } from "@nestjs/common";
 import { Knex } from "knex";
 import { Response } from 'express';
 import { InjectKnex } from "nestjs-knex";
-import { insertUsersDto, listUsersDto } from "src/application/dto/listUsersDto";
 import {  ResponseHandler, requestGenericPaginate } from "src/application/IResponse";
-import { userRepository } from "../repository/usersRepository";
+import { UserServices } from "src/application/services/userService";
+import { CreateUserObject } from "src/application/dto/CreateUserObject";
+import { UserRepository } from "../repository/UsersRepository";
+import { JwtAuthGuard } from "../jwt.AuthGuard";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { getAllUserObject } from "src/application/dto/getAllUserObject";
 
+@ApiBearerAuth()
+@ApiTags('users')
 @Controller('users')
 export class UsersController {
-    constructor(@InjectKnex() private readonly knex: Knex, private readonly _userRepository: userRepository){}
-
-    @Get('')
-    async getUsers(@Query() payload: requestGenericPaginate, @Res() res: Response){
-
-        const response = new ResponseHandler();
-        try {
-            //const query: listUsersDto[] = await this.knex.select('*').from('user');
-            const query = await this._userRepository.getAllUsers(payload);
-            console.log(query);
-            return res.json(response.succest(200,'exito', query));
-        } catch (error) {
-            console.error(error);
-            return res.status(400).json(response.error(400,error.message));
-        }
+    private readonly _userService: UserServices
+    constructor(private userRepository: UserRepository){
+        this._userService = new UserServices(userRepository);
     }
 
-    @Post('')
-    insertUsers(@Body() request: insertUsersDto){
-        const response = new ResponseHandler();
+    @UseGuards(JwtAuthGuard)
+    @Get('')
+    async getUsers(@Query() payload: getAllUserObject, @Res() res: Response){
+        const response = await this._userService.getAll(payload.rol);
+        return res.status(response.status).json(response);
+    }
 
-        try {
-            
-        } catch (error) {
-            
-        }
+    @Post('create')
+    async insert(@Body() createUser: CreateUserObject, @Res() res: Response){
+        console.log(createUser);
+        const response = await this._userService.insert(createUser)
+        return res.status(response.status).json(response);
     }
 
 }

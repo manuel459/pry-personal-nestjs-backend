@@ -1,6 +1,9 @@
 import { requestGenericPaginate } from "src/application/IResponse";
-import { listUsersDto } from "src/application/dto/listUsersDto";
+import { UserObjectLogin } from "src/application/dto/UserObjectLogin";
 
-export interface IuserRepository{
-    getAllUsers(payload: any): Promise<listUsersDto[]>;
+export interface IUserRepository{
+    getUser(correo:string);
+    insert(insert: any);
+    getById(id: number, rol: string);
+    getAll(rol:string);
 }
