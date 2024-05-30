@@ -9,7 +9,7 @@ export class UserRepository implements IUserRepository {
     
     async getAll(rol:string){
         const query = this.knex('usuarios').select();
-        if(rol){
+        if(rol && rol != 'null'){
             query.where('rol', rol)
         }
         return await query;

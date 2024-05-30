@@ -7,7 +7,7 @@ export class PedidosRepository implements IPedidosRepository {
     
     async getAll(nro_pedido: number) {
         const query = this.knex('pedidos').select();
-        if(nro_pedido){
+        if(nro_pedido && nro_pedido.toString() != 'null'){
             query.where('numero_pedido',nro_pedido);
         }
         return await query;

@@ -26,7 +26,7 @@ export class AuthServices {
 
             const token = await this.jwtService.signAsync({id: user.id, codigotrabajador: user.codigotrabajador, correo: user.correo, nombre: user.nombre });   
             console.log('resultando', token)
-            return response.succest(200, 'Token obtenido satisfactoriamente', { accessToken: token } );
+            return response.succest(200, 'Token obtenido satisfactoriamente', { nombre: user.nombre , accessToken: token } );
         } catch (error) {
             console.log(error);
             return response.error(error.status, error.message);

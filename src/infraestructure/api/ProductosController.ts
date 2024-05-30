@@ -1,9 +1,10 @@
-import { Controller, Get, Query, Res } from "@nestjs/common";
+import { Controller, Get, Query, Res, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { ProductosServices } from "src/application/services/ProductosService";
 import { ProductosRepository } from "../repository/ProductosRepository";
 import { Response } from 'express';
 import { getAllProductObject } from "src/application/dto/getAllProductObject";
+import { JwtAuthGuard } from "../jwt.AuthGuard";
 
 @ApiBearerAuth()
 @ApiTags('productos')
@@ -14,6 +15,7 @@ export class ProductosController {
         this._productService = new ProductosServices(productosRepository);
     }
 
+    @UseGuards(JwtAuthGuard)
     @Get('')
     async getAll(@Query() payload: getAllProductObject, @Res() res:Response){
         const response = await this._productService.getAll(payload.sku, payload.nombre);

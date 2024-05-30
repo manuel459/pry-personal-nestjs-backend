@@ -27,7 +27,7 @@ export class UserServices {
         const response = new ResponseHandler();
         try {
             const result = await this._userRepository.getAll(rol);
-            return response.succest(200, 'Usuario Creado', result);   
+            return response.succest(200, 'Consulta exitosa', result);   
         } catch (error) {
             return response.error(error.status, error.message);
         }
